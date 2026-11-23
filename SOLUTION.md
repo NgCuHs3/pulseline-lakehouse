@@ -43,7 +43,7 @@ Profiling `data/incoming/` (`batch_1`, `batch_2`, `batch_2_redelivered`) and `da
 ## 3. What I Would Do Next With More Time
 
 1. **Table Partitioning & Compaction:** Partition `landing.*` by `_ingested_at` day and `crm.quote_line` by `bucket(32, quote_line_id)` (or `quote_date` month) with periodic Iceberg `rewrite_data_files` + `expire_snapshots` maintenance jobs to prevent small-file explosion.
-2. **Event-Driven Ingestion & Multi-Engine Serving (Production Scale-Out):** Replace folder polling with **RabbitMQ** quorum queues (publisher confirms, prefetch backpressure, dead-letter exchanges), stream enriched records into **ClickHouse** (`ReplacingMergeTree(updated_at, is_deleted)`) for sub-second analytics, store operational metadata/ledgers in **MySQL** & raw payloads in **MongoDB**, and index searchable product/quote text in **Apache Solr** (detailed in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)).
+2. **Event-Driven Ingestion & Multi-Engine Serving (Production Scale-Out):** Replace folder polling with **RabbitMQ** quorum queues (publisher confirms, prefetch backpressure, dead-letter exchanges), stream enriched records into **ClickHouse** (`ReplacingMergeTree(updated_at, is_deleted)`) for sub-second analytics, store operational metadata/ledgers in **MySQL** & raw payloads in **MongoDB**, and index searchable product/quote text in **Apache Solr** (detailed in [README.md](README.md#production-scale-out-blueprint)).
 3. **Quarantine & Alerting:** Route critical DQ violations (null PKs, breaking schema drift) to a `quarantine.*` Iceberg table + Prometheus/Slack alerting rather than halting the entire batch when partial isolation is preferred.
 
 ---
